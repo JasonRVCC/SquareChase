@@ -25,8 +25,8 @@ namespace SquareChase
         int playerScore = 0;
         float timeRemaining = 0.0f;
         const float TIME_PER_SQUARE = 0.75f;
-        const int SQUARE_SIZE = 32;
-        Color[] colors = new Color[3] { Color.Crimson, Color.Azure, Color.Yellow };
+        int squareSize = 200;
+        Color[] colors = new Color[3] { Color.Crimson, Color.SkyBlue, Color.Yellow };
 
         public Game1()
         {
@@ -42,7 +42,7 @@ namespace SquareChase
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            
             this.IsMouseVisible = true;
             base.Initialize();
         }
@@ -56,7 +56,6 @@ namespace SquareChase
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
             squareTexture = Content.Load<Texture2D>(@"Square");
         }
 
@@ -82,14 +81,26 @@ namespace SquareChase
 
             if (timeRemaining == 0.0f)
             {
-                currentSquare = new Rectangle(rand.Next(0, this.Window.ClientBounds.Width - SQUARE_SIZE), 
-                    rand.Next(0, this.Window.ClientBounds.Height - SQUARE_SIZE), 
-                    SQUARE_SIZE, SQUARE_SIZE);
+                currentSquare = new Rectangle(rand.Next(0, this.Window.ClientBounds.Width - squareSize),
+                    rand.Next(0, this.Window.ClientBounds.Height - squareSize),
+                    squareSize, squareSize);
 
                 timeRemaining = TIME_PER_SQUARE;
             }
 
-            // TODO: Add your update logic here
+            MouseState mouse = Mouse.GetState();
+            if ((mouse.LeftButton == ButtonState.Pressed) && currentSquare.Contains(mouse.X, mouse.Y))
+            {
+                playerScore++;
+                if(squareSize != 8)
+                    { squareSize = squareSize - 8; 
+                    }
+                timeRemaining = 0.0f;
+            }
+
+            timeRemaining = MathHelper.Max(0, 
+                timeRemaining - (float)gameTime.ElapsedGameTime.TotalSeconds);
+
 
             base.Update(gameTime);
         }
@@ -102,11 +113,10 @@ namespace SquareChase
         {
             GraphicsDevice.Clear(Color.DarkMagenta);
 
-            //spriteBatch.Begin();
-            //spriteBatch.Draw(squareTexture, new Rectangle(0, 0, 100, 100), colors[0]);
-            //spriteBatch.End();
+            spriteBatch.Begin();
+            spriteBatch.Draw(squareTexture, currentSquare, colors[playerScore%3]);
+            spriteBatch.End();
 
-            // TODO: Add your drawing code here
 
             base.Draw(gameTime);
         }
