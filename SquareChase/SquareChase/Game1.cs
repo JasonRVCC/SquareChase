@@ -25,6 +25,7 @@ namespace SquareChase
         int playerScore = 0;
         float timeRemaining = 0.0f;
         const float TIME_PER_SQUARE = 0.75f;
+        const int SQUARE_SIZE = 32;
         Color[] colors = new Color[3] { Color.Crimson, Color.Azure, Color.Yellow };
 
         public Game1()
@@ -56,6 +57,7 @@ namespace SquareChase
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            squareTexture = Content.Load<Texture2D>(@"Square");
         }
 
         /// <summary>
@@ -78,6 +80,15 @@ namespace SquareChase
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
+            if (timeRemaining == 0.0f)
+            {
+                currentSquare = new Rectangle(rand.Next(0, this.Window.ClientBounds.Width - SQUARE_SIZE), 
+                    rand.Next(0, this.Window.ClientBounds.Height - SQUARE_SIZE), 
+                    SQUARE_SIZE, SQUARE_SIZE);
+
+                timeRemaining = TIME_PER_SQUARE;
+            }
+
             // TODO: Add your update logic here
 
             base.Update(gameTime);
@@ -90,6 +101,10 @@ namespace SquareChase
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.DarkMagenta);
+
+            //spriteBatch.Begin();
+            //spriteBatch.Draw(squareTexture, new Rectangle(0, 0, 100, 100), colors[0]);
+            //spriteBatch.End();
 
             // TODO: Add your drawing code here
 
